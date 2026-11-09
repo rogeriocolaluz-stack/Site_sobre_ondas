@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipos de Ondas - Bom Ondas</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="./imagens/wave (1).png">
+    <style>
+        .simulador-container {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 30px;
+            border: 1px solid #334155;
+            margin-bottom: 30px;
+        }
+
+        .tabs-navegacao {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .btn-tab {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 14px 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 12.5px;
+            border-radius: 0;
+            text-align: center;
+        }
+
+        .btn-tab:hover {
+            background: #334155;
+            color: #f8fafc;
+        }
+
+        .btn-tab.ativa {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+        }
+
+        .canvas-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        #canvasTipos {
+            width: 100%;
+            height: 360px;
+            background-color: #090d16;
+            display: block;
+            border: 1px solid #334155;
+            cursor: crosshair;
+        }
+
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .canvas-titulo {
+            margin: 0;
+            font-size: 18px;
+            color: #38bdf8;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .legenda-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .legenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legenda-cor {
+            width: 16px;
+            height: 8px;
+            display: inline-block;
+        }
+
+        .barra-gradiente-mar {
+            width: 160px;
+            height: 12px;
+            background: linear-gradient(to right, #001122, #0284c7, #ffffff, #ef4444);
+            border: 1px solid #334155;
+        }
+
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .btn-preset {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #0284c7;
+            padding: 12px 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            border-radius: 0;
+            text-align: center;
+        }
+
+        .btn-preset:hover {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #38bdf8;
+        }
+
+        .btn-audio {
+            background: #10b981;
+            color: #ffffff;
+            border: 1px solid #059669;
+            font-weight: bold;
+        }
+
+        .btn-audio:hover {
+            background: #059669;
+            border-color: #34d399;
+        }
+
+        .btn-audio.ativo {
+            background: #ef4444;
+            border-color: #dc2626;
+        }
+
+        .btn-audio.ativo:hover {
+            background: #dc2626;
+            border-color: #f87171;
+        }
+
+        .controles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .painel-controle {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 20px;
+        }
+
+        .painel-controle h4 {
+            color: #38bdf8;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .grupo-campo {
+            margin-bottom: 16px;
+        }
+
+        .grupo-campo label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+        }
+
+        .grupo-campo input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            outline: none;
+            accent-color: #38bdf8;
+            cursor: pointer;
+        }
+
+        .valor-tag {
+            color: #38bdf8;
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .painel-metricas {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .tabela-metricas {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .tabela-metricas th, .tabela-metricas td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .tabela-metricas th {
+            background-color: #0f172a;
+            color: #38bdf8;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .tabela-metricas tr:last-child td {
+            border-bottom: none;
+        }
+
+        .destaque-valor {
+            color: #38bdf8;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .info-card {
+            background: #1e293b;
+            border-left: 4px solid #0284c7;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .info-card h3 {
+            color: #38bdf8;
+            margin-top: 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <header class="cabecalho">
+            <h1 class="cabecalho-titulo">Bom Ondas</h1>
+            <p class="cabecalho-subtitulo">Simulador Interativo de Tipos e Naturezas de Ondas</p>
+        </header>
+
+        <nav id="menu">
+            <a href="index.html" class="menu-item">Início</a>
+            <a href="oqsaoondas.html" class="menu-item">O que são Ondas</a>
+            <a href="tipos_de_ondas.html" class="menu-item menu-item-ativo">Tipos de Ondas</a>
+            <a href="simulador.html" class="menu-item">Simulador Interferência</a>
+        
+            <a href="contato.html" class="menu-item">Contato</a>
+        </nav>
+
+        <main class="conteudo-principal simulador-container">
+
+            <div class="caixa-destaque" style="background-color: #1e293b; border-color: #334155;">
+                <h2 class="caixa-destaque-titulo" style="color: #38bdf8;">Laboratório Interativo de Classificação de Ondas</h2>
+                <p class="caixa-destaque-texto" style="color: #94a3b8;">
+                    Explore visualmente a diferença entre oscilação transversal, longitudinal, propagação de campos eletromagnéticos 3D e a formação de interferências na superfície do mar.
+                </p>
+            </div>
+
+            <div class="tabs-navegacao">
+                <button class="btn-tab ativa" id="tabTL" data-modo="transversal_longitudinal">1. Transversal vs Longitudinal</button>
+                <button class="btn-tab" id="tabMec" data-modo="mecanica">2. Onda Mecânica (Corda / Mola)</button>
+                <button class="btn-tab" id="tabEM" data-modo="eletromagnetica">3. Onda Eletromagnética 3D</button>
+                <button class="btn-tab" id="tabMar" data-modo="ondas_mar">4. Ondas no Mar (Visão Superior)</button>
+            </div>
+
+            <div id="painelControlesMar" style="display: none; background: #1e293b; border: 1px solid #334155; padding: 15px; margin-bottom: 20px;">
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <button id="btnLimparPontos" class="btn-preset" style="background: #ef4444; border-color: #dc2626;">🗑️ Limpar Todos os Pontos</button>
+                    <button id="btnReset2Pontos" class="btn-preset" style="background: #0284c7; border-color: #0369a1;">🔄 Restaurar 2 Pontos Iniciais</button>
+                </div>
+                <p style="color: #38bdf8; font-size: 13.5px; margin: 0;">
+                    💡 <strong>Instrução:</strong> Clique em qualquer ponto dentro do mapa abaixo para adicionar novas fontes de ondas no mar!
+                </p>
+            </div>
+
+            <div class="canvas-card">
+                <div class="canvas-header">
+                    <h3 class="canvas-titulo" id="tituloModo">Propagação Transversal vs Longitudinal</h3>
+                    <button id="btnAudio" class="btn-preset btn-audio" style="width: auto; min-width: 180px;">🔊 Ouvir Som / Frequência</button>
+                </div>
+
+                <canvas id="canvasTipos" width="1000" height="360"></canvas>
+
+                <div class="legenda-container" id="legendaDinamica"></div>
+            </div>
+
+            <h4 style="color: #38bdf8; text-transform: uppercase; margin-bottom: 12px; font-size: 14px;">Presets de Fenômenos Reais:</h4>
+            <div class="presets-grid">
+                <button class="btn-preset" id="presetSomAr">👂 Som no Ar (343 m/s)</button>
+                <button class="btn-preset" id="presetCordaViolao">🎸 Corda de Violão (Alta Tensão)</button>
+                <button class="btn-preset" id="presetLuzVisivel">💡 Luz Visível (Eletromagnética)</button>
+                <button class="btn-preset" id="presetRadio">📻 Sinal de Rádio (AM/FM)</button>
+                <button class="btn-preset" id="presetTsunami">🌊 Tsunami (Superfície)</button>
+            </div>
+
+            <div class="controles-grid">
+                <div class="painel-controle">
+                    <h4>Parâmetros da Onda</h4>
+                    <div class="grupo-campo">
+                        <label>Frequência (f): <span id="valFreq" class="valor-tag">2.0 Hz</span></label>
+                        <!-- Reduzida a amplitude padrão no slider para 25px para melhor legibilidade -->
+                        <input type="range" id="sliderFreq" min="0.2" max="10" value="2.0" step="0.1">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label>Amplitude (A): <span id="valAmp" class="valor-tag">25 px</span></label>
+                        <input type="range" id="sliderAmp" min="5" max="60" value="25" step="1">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label>Comprimento de Onda (λ): <span id="valLambda" class="valor-tag">150 px</span></label>
+                        <input type="range" id="sliderLambda" min="50" max="400" value="150" step="5">
+                    </div>
+                </div>
+
+                <div class="painel-controle">
+                    <h4>Propriedades do Meio</h4>
+                    <div class="grupo-campo">
+                        <label>Tensão / Rigidez do Meio: <span id="valTensao" class="valor-tag">Média</span></label>
+                        <input type="range" id="sliderTensao" min="1" max="5" value="3" step="1">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label>Amortecimento / Viscosidade: <span id="valAmortecimento" class="valor-tag">Baixo</span></label>
+                        <input type="range" id="sliderAmortecimento" min="0" max="0.05" value="0.005" step="0.001">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label>Densidade de Partículas: <span id="valDensidade" class="valor-tag">Normal</span></label>
+                        <input type="range" id="sliderDensidade" min="20" max="60" value="35" step="1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="painel-metricas">
+                <h4 style="color: #38bdf8; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+                    Cálculos das Grandezas Ondulatórias Em Tempo Real
+                </h4>
+                <table class="tabela-metricas">
+                    <thead>
+                        <tr>
+                            <th>Grandeza Física</th>
+                            <th>Fórmula</th>
+                            <th>Valor Calculado</th>
+                            <th>Classificação do Meio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Velocidade de Propagação (v)</strong></td>
+                            <td>v = λ · f</td>
+                            <td class="destaque-valor" id="calcVelocidade">300.0 px/s</td>
+                            <td id="infoMeio">Meio Material Contínuo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Período de Oscilação (T)</strong></td>
+                            <td>T = 1 / f</td>
+                            <td class="destaque-valor" id="calcPeriodo">0.50 s</td>
+                            <td id="infoNatureza">Onda Mecânica</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Energia Relativa (E)</strong></td>
+                            <td>E ∝ A² · f²</td>
+                            <td class="destaque-valor" id="calcEnergia">2500.0 u.a.</td>
+                            <td id="infoDirecao">Transversal / Longitudinal</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-card" id="cardExplicativo">
+                <h3 id="explicativoTitulo">Sobre Ondas Transversais e Longitudinais</h3>
+                <p class="texto-descricao" id="explicativoTexto" style="color: #cbd5e1; margin-bottom: 0;">
+                    Nas <strong>Ondas Transversais</strong>, as partículas do meio oscilam em direção perpendicular à propagação. Nas <strong>Ondas Longitudinais</strong>, a oscilação ocorre na mesma direção.
+                </p>
+            </div>
+
+        </main>
+
+        <footer class="rodape">
+            <p>&copy; 2026 Site sobre Ondas - Rogério C. - BomBom&copy;</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvasTipos');
+        const ctx = canvas.getContext('2d');
+
+        const btnTabs = document.querySelectorAll('.btn-tab');
+        const tituloModo = document.getElementById('tituloModo');
+        const legendaDinamica = document.getElementById('legendaDinamica');
+        const painelControlesMar = document.getElementById('painelControlesMar');
+
+        const sliderFreq = document.getElementById('sliderFreq');
+        const sliderAmp = document.getElementById('sliderAmp');
+        const sliderLambda = document.getElementById('sliderLambda');
+        const sliderTensao = document.getElementById('sliderTensao');
+        const sliderAmortecimento = document.getElementById('sliderAmortecimento');
+        const sliderDensidade = document.getElementById('sliderDensidade');
+
+        const valFreq = document.getElementById('valFreq');
+        const valAmp = document.getElementById('valAmp');
+        const valLambda = document.getElementById('valLambda');
+        const valTensao = document.getElementById('valTensao');
+        const valAmortecimento = document.getElementById('valAmortecimento');
+        const valDensidade = document.getElementById('valDensidade');
+
+        const calcVelocidade = document.getElementById('calcVelocidade');
+        const calcPeriodo = document.getElementById('calcPeriodo');
+        const calcEnergia = document.getElementById('calcEnergia');
+        const infoMeio = document.getElementById('infoMeio');
+        const infoNatureza = document.getElementById('infoNatureza');
+        const infoDirecao = document.getElementById('infoDirecao');
+
+        const explicativoTitulo = document.getElementById('explicativoTitulo');
+        const explicativoTexto = document.getElementById('explicativoTexto');
+
+        const btnAudio = document.getElementById('btnAudio');
+
+        const presetSomAr = document.getElementById('presetSomAr');
+        const presetCordaViolao = document.getElementById('presetCordaViolao');
+        const presetLuzVisivel = document.getElementById('presetLuzVisivel');
+        const presetRadio = document.getElementById('presetRadio');
+        const presetTsunami = document.getElementById('presetTsunami');
+
+        let modoAtual = 'transversal_longitudinal';
+        let tempoAnimacao = 0;
+
+        let pontosMar = [
+            { x: 0.35, y: 0.5 },
+            { x: 0.65, y: 0.5 }
+        ];
+
+        let audioCtx = null, oscilador = null, ganhoMaster = null;
+        let audioTocando = false;
+
+        function redimensionarCanvas() {
+            canvas.width = canvas.parentElement.clientWidth - 40;
+            canvas.height = 360;
+        }
+
+        window.addEventListener('resize', redimensionarCanvas);
+        redimensionarCanvas();
+
+        canvas.addEventListener('click', (evento) => {
+            if (modoAtual !== 'ondas_mar') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const xRelativo = (evento.clientX - rect.left) / canvas.width;
+            const yRelativo = (evento.clientY - rect.top) / canvas.height;
+
+            pontosMar.push({ x: xRelativo, y: yRelativo });
+        });
+
+        document.getElementById('btnLimparPontos').addEventListener('click', () => {
+            pontosMar = [];
+        });
+
+        document.getElementById('btnReset2Pontos').addEventListener('click', () => {
+            pontosMar = [
+                { x: 0.35, y: 0.5 },
+                { x: 0.65, y: 0.5 }
+            ];
+        });
+
+        function atualizarUI() {
+            const freq = parseFloat(sliderFreq.value);
+            const amp = parseFloat(sliderAmp.value);
+            const lambda = parseFloat(sliderLambda.value);
+            const tensao = parseInt(sliderTensao.value);
+            const amort = parseFloat(sliderAmortecimento.value);
+            const densidade = parseInt(sliderDensidade.value);
+
+            valFreq.textContent = freq.toFixed(1) + ' Hz';
+            valAmp.textContent = amp.toFixed(0) + ' px';
+            valLambda.textContent = lambda.toFixed(0) + ' px';
+            
+            const niveisTensao = ['Muito Baixa', 'Baixa', 'Média', 'Alta', 'Extrema'];
+            valTensao.textContent = niveisTensao[tensao - 1];
+
+            valAmortecimento.textContent = amort === 0 ? 'Nenhum' : (amort < 0.01 ? 'Baixo' : 'Alto');
+            valDensidade.textContent = densidade + ' part.';
+
+            const vel = lambda * freq;
+            const periodo = 1 / freq;
+            const energia = (amp * amp) * (freq * freq);
+
+            calcVelocidade.textContent = vel.toFixed(1) + ' px/s';
+            calcPeriodo.textContent = periodo.toFixed(2) + ' s';
+            calcEnergia.textContent = energia.toFixed(0) + ' u.a.';
+
+            if (audioTocando && oscilador && audioCtx) {
+                const freqAudivel = Math.min(Math.max(freq * 120, 110), 880);
+                oscilador.frequency.setTargetAtTime(freqAudivel, audioCtx.currentTime, 0.02);
+            }
+        }
+
+        btnTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                btnTabs.forEach(t => t.classList.remove('ativa'));
+                tab.classList.add('ativa');
+                modoAtual = tab.getAttribute('data-modo');
+                configurarModoUI();
+            });
+        });
+
+        function configurarModoUI() {
+            painelControlesMar.style.display = 'none';
+
+            if (modoAtual === 'transversal_longitudinal') {
+                tituloModo.textContent = "Propagação Transversal vs Longitudinal (Partículas)";
+                legendaDinamica.innerHTML = `
+                    <div class="legenda-item"><span class="legenda-cor" style="background-color: #38bdf8;"></span><span style="color: #38bdf8;">Onda Transversal</span></div>
+                    <div class="legenda-item"><span class="legenda-cor" style="background-color: #f43f5e;"></span><span style="color: #f43f5e;">Onda Longitudinal</span></div>
+                `;
+                infoMeio.textContent = "Meio Deformável Material";
+                infoNatureza.textContent = "Mecânica";
+                infoDirecao.textContent = "Transversal / Longitudinal";
+                explicativoTitulo.textContent = "Comparativo: Transversal vs Longitudinal";
+                explicativoTexto.innerHTML = "Nas <strong>Ondas Transversais</strong>, as partículas movem-se perpendicularmente. Nas <strong>Ondas Longitudinais</strong>, a oscilação ocorre na mesma direção da propagação.";
+            } else if (modoAtual === 'mecanica') {
+                tituloModo.textContent = "Simulação de Pulso em Corda / Mola (Meio Mecânico)";
+                legendaDinamica.innerHTML = `
+                    <div class="legenda-item"><span class="legenda-cor" style="background-color: #38bdf8;"></span><span style="color: #38bdf8;">Corda Tensa</span></div>
+                    <div class="legenda-item"><span class="legenda-cor" style="background-color: #eab308;"></span><span style="color: #eab308;">Extremidade Fixa</span></div>
+                `;
+                infoMeio.textContent = "Corda / Meio Elástico Tenso";
+                infoNatureza.textContent = "Mecânica (Exige Meio)";
+                infoDirecao.textContent = "Transversal";
+                explicativoTitulo.textContent = "Ondas Mecânicas em Meios Materiais";
+                explicativoTexto.innerHTML = "Ondas mecânicas requerem obrigatoriamente um meio material para se propagarem.";
+            } else if (modoAtual === 'eletromagnetica') {
+                tituloModo.textContent = "Onda Eletromagnética 3D (Campos E & B no Vácuo)";
+                legendaDinamica.innerHTML = `
+                    <div class="legenda-item"><span class="legenda-cor" style="background-color: #38bdf8;"></span><span style="color: #38bdf8;">Campo Elétrico E</span></div>
+                    <div class="legenda-item"><span class="legenda-cor" style="background-color: #f43f5e;"></span><span style="color: #f43f5e;">Campo Magnético B</span></div>
+                `;
+                infoMeio.textContent = "Vácuo / Meio Dielétrico";
+                infoNatureza.textContent = "Eletromagnética";
+                infoDirecao.textContent = "Transversal Tridimensional";
+                explicativoTitulo.textContent = "Natureza das Ondas Eletromagnéticas";
+                explicativoTexto.innerHTML = "Ondas Eletromagnéticas possuem campos elétrico e magnético perpendiculares entre si.";
+            } else if (modoAtual === 'ondas_mar') {
+                painelControlesMar.style.display = 'block';
+                tituloModo.textContent = "Simulação de Interferência de Ondas no Mar (Visão Superior)";
+                legendaDinamica.innerHTML = `
+                    <div class="legenda-item">
+                        <span>Vale (Interferência Destrutiva)</span>
+                        <div class="barra-gradiente-mar"></div>
+                        <span>Crista (Interferência Construtiva)</span>
+                    </div>
+                `;
+                infoMeio.textContent = "Superfície Oceânica";
+                infoNatureza.textContent = "Mecânica (Superfície 2D)";
+                infoDirecao.textContent = "Bidimensional";
+                explicativoTitulo.textContent = "Como funciona a interferência nas ondas do mar?";
+                explicativoTexto.innerHTML = "Cada ponto gera ondas circulares. Onde duas cristas se somam ocorre a <strong>Interferência Construtiva</strong>. Onde a crista encontra o vale ocorre a <strong>Interferência Destrutiva</strong>.";
+            }
+            atualizarUI();
+        }
+
+        function desenharOndasMar() {
+            const largura = canvas.width;
+            const altura = canvas.height;
+            const passo = 6; 
+
+            const freq = parseFloat(sliderFreq.value);
+            const amp = parseFloat(sliderAmp.value);
+            const lambda = parseFloat(sliderLambda.value);
+
+            const k = (2 * Math.PI) / lambda;
+            const omega = 2 * Math.PI * freq;
+
+            for (let x = 0; x < largura; x += passo) {
+                for (let y = 0; y < altura; y += passo) {
+                    let alturaResultante = 0;
+
+                    pontosMar.forEach(ponto => {
+                        const px = ponto.x * largura;
+                        const py = ponto.y * altura;
+                        const distancia = Math.hypot(x - px, y - py);
+                        alturaResultante += Math.sin(k * distancia - omega * tempoAnimacao) * (amp / (1 + distancia * 0.003));
+                    });
+
+                    const valorNormalizado = Math.max(-1, Math.min(1, alturaResultante / (amp * 1.5)));
+                    
+                    let r, g, b;
+                    if (valorNormalizado > 0) {
+                        r = Math.floor(valorNormalizado * 220);
+                        g = Math.floor(132 + valorNormalizado * 100);
+                        b = Math.floor(200 + valorNormalizado * 55);
+                    } else {
+                        const absVal = Math.abs(valorNormalizado);
+                        r = Math.floor(15 * (1 - absVal));
+                        g = Math.floor(23 + absVal * 30);
+                        b = Math.floor(42 + absVal * 80);
+                    }
+
+                    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                    ctx.fillRect(x, y, passo, passo);
+                }
+            }
+
+            pontosMar.forEach((ponto, index) => {
+                const px = ponto.x * largura;
+                const py = ponto.y * altura;
+
+                ctx.strokeStyle = '#fde047';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(px, py, 6 + (Math.sin(tempoAnimacao * 5) * 2), 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.fillStyle = '#eab308';
+                ctx.beginPath();
+                ctx.arc(px, py, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(`P${index + 1}`, px + 8, py - 8);
+            });
+        }
+
+        function desenhar() {
+            const largura = canvas.width;
+            const altura = canvas.height;
+
+            if (modoAtual === 'ondas_mar') {
+                desenharOndasMar();
+            } else {
+                ctx.clearRect(0, 0, largura, altura);
+
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < largura; x += 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, altura);
+                    ctx.stroke();
+                }
+
+                const freq = parseFloat(sliderFreq.value);
+                // Escala de amplitude reduzida para melhor visualização
+                const amp = parseFloat(sliderAmp.value) * 0.8;
+                const lambda = parseFloat(sliderLambda.value);
+                const amort = parseFloat(sliderAmortecimento.value);
+                const numParticulas = parseInt(sliderDensidade.value);
+
+                const k = (2 * Math.PI) / lambda;
+                const omega = 2 * Math.PI * freq;
+
+                if (modoAtual === 'transversal_longitudinal') {
+                    const centroYTransversal = altura * 0.3;
+                    const centroYLongitudinal = altura * 0.75;
+
+                    ctx.strokeStyle = '#334155';
+                    ctx.beginPath();
+                    ctx.moveTo(0, centroYTransversal);
+                    ctx.lineTo(largura, centroYTransversal);
+                    ctx.moveTo(0, centroYLongitudinal);
+                    ctx.lineTo(largura, centroYLongitudinal);
+                    ctx.stroke();
+
+                    // Onda Transversal
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    for (let x = 0; x < largura; x += 2) {
+                        const y = centroYTransversal - Math.sin(k * x - omega * tempoAnimacao) * amp;
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+
+                    for (let i = 0; i <= numParticulas; i++) {
+                        const xBase = (largura / numParticulas) * i;
+                        const y = centroYTransversal - Math.sin(k * xBase - omega * tempoAnimacao) * amp;
+                        
+                        ctx.fillStyle = '#38bdf8';
+                        ctx.beginPath();
+                        ctx.arc(xBase, y, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+
+                    // Onda Longitudinal
+                    for (let i = 0; i <= numParticulas * 1.5; i++) {
+                        const xBase = (largura / (numParticulas * 1.5)) * i;
+                        const deslocamentoX = Math.sin(k * xBase - omega * tempoAnimacao) * amp * 0.7;
+                        const xFinal = xBase + deslocamentoX;
+
+                        ctx.fillStyle = '#f43f5e';
+                        for (let dy = -20; dy <= 20; dy += 10) {
+                            ctx.beginPath();
+                            ctx.arc(xFinal, centroYLongitudinal + dy, 4, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+
+                } else if (modoAtual === 'mecanica') {
+                    const centroY = altura / 2;
+
+                    ctx.strokeStyle = '#334155';
+                    ctx.beginPath();
+                    ctx.moveTo(0, centroY);
+                    ctx.lineTo(largura, centroY);
+                    ctx.stroke();
+
+                    const passoX = largura / numParticulas;
+                    ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+
+                    let pontos = [];
+                    for (let i = 0; i <= numParticulas; i++) {
+                        const x = i * passoX;
+                        const fatorAmortecimento = Math.exp(-amort * x);
+                        const y = centroY - Math.sin(k * x - omega * tempoAnimacao) * amp * fatorAmortecimento;
+                        pontos.push({ x, y });
+
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+
+                    pontos.forEach((pt, index) => {
+                        ctx.fillStyle = index === 0 ? '#10b981' : (index === pontos.length - 1 ? '#eab308' : '#38bdf8');
+                        ctx.beginPath();
+                        ctx.arc(pt.x, pt.y, index === 0 || index === pontos.length - 1 ? 7 : 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+
+                } else if (modoAtual === 'eletromagnetica') {
+                    const centroX = 50;
+                    const centroY = altura / 2;
+                    const comprimentoEixo = largura - 100;
+
+                    ctx.strokeStyle = '#a855f7';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(centroX, centroY);
+                    ctx.lineTo(centroX + comprimentoEixo, centroY);
+                    ctx.stroke();
+
+                    const anguloZ = Math.PI / 4; 
+                    const escalaZ = 0.6;
+
+                    for (let xRel = 0; xRel < comprimentoEixo; xRel += 4) {
+                        const xCanvas = centroX + xRel;
+                        const valOnda = Math.sin(k * xRel - omega * tempoAnimacao);
+
+                        const ampE = valOnda * amp;
+                        const yE = centroY - ampE;
+
+                        const ampB = valOnda * amp;
+                        const xB = xCanvas + Math.cos(anguloZ) * ampB * escalaZ;
+                        const yB = centroY + Math.sin(anguloZ) * ampB * escalaZ;
+
+                        if (xRel % 12 === 0) {
+                            ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+                            ctx.lineWidth = 1.5;
+                            ctx.beginPath();
+                            ctx.moveTo(xCanvas, centroY);
+                            ctx.lineTo(xCanvas, yE);
+                            ctx.stroke();
+
+                            ctx.strokeStyle = 'rgba(244, 63, 94, 0.7)';
+                            ctx.beginPath();
+                            ctx.moveTo(xCanvas, centroY);
+                            ctx.lineTo(xB, yB);
+                            ctx.stroke();
+                        }
+                    }
+
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    for (let xRel = 0; xRel < comprimentoEixo; xRel += 2) {
+                        const xCanvas = centroX + xRel;
+                        const ampE = Math.sin(k * xRel - omega * tempoAnimacao) * amp;
+                        const yE = centroY - ampE;
+                        if (xRel === 0) ctx.moveTo(xCanvas, yE);
+                        else ctx.lineTo(xCanvas, yE);
+                    }
+                    ctx.stroke();
+
+                    ctx.strokeStyle = '#f43f5e';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    for (let xRel = 0; xRel < comprimentoEixo; xRel += 2) {
+                        const ampB = Math.sin(k * xRel - omega * tempoAnimacao) * amp;
+                        const xB = centroX + xRel + Math.cos(anguloZ) * ampB * escalaZ;
+                        const yB = centroY + Math.sin(anguloZ) * ampB * escalaZ;
+                        if (xRel === 0) ctx.moveTo(xB, yB);
+                        else ctx.lineTo(xB, yB);
+                    }
+                    ctx.stroke();
+                }
+            }
+
+            tempoAnimacao += 0.03;
+            requestAnimationFrame(desenhar);
+        }
+
+        function alternarAudio() {
+            if (audioTocando) {
+                if (oscilador) { oscilador.stop(); oscilador.disconnect(); }
+                audioTocando = false;
+                btnAudio.textContent = "🔊 Ouvir Som / Frequência";
+                btnAudio.classList.remove('ativo');
+            } else {
+                if (!audioCtx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContextClass();
+                }
+
+                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+
+                oscilador = audioCtx.createOscillator();
+                ganhoMaster = audioCtx.createGain();
+
+                oscilador.type = modoAtual === 'eletromagnetica' ? 'sawtooth' : 'sine';
+                
+                const freq = parseFloat(sliderFreq.value);
+                const freqAudivel = Math.min(Math.max(freq * 120, 110), 880);
+                
+                oscilador.frequency.setValueAtTime(freqAudivel, audioCtx.currentTime);
+                ganhoMaster.gain.setValueAtTime(0.2, audioCtx.currentTime);
+
+                oscilador.connect(ganhoMaster);
+                ganhoMaster.connect(audioCtx.destination);
+
+                oscilador.start();
+                audioTocando = true;
+
+                btnAudio.textContent = "⏹ Parar Som";
+                btnAudio.classList.add('ativo');
+            }
+        }
+
+        btnAudio.addEventListener('click', alternarAudio);
+
+        [sliderFreq, sliderAmp, sliderLambda, sliderTensao, sliderAmortecimento, sliderDensidade].forEach(input => {
+            input.addEventListener('input', atualizarUI);
+        });
+
+        presetSomAr.addEventListener('click', () => {
+            document.getElementById('tabTL').click();
+            sliderFreq.value = 2.8;
+            sliderAmp.value = 25;
+            sliderLambda.value = 120;
+            sliderTensao.value = 3;
+            sliderAmortecimento.value = 0.002;
+            atualizarUI();
+        });
+
+        presetCordaViolao.addEventListener('click', () => {
+            document.getElementById('tabMec').click();
+            sliderFreq.value = 4.4;
+            sliderAmp.value = 30;
+            sliderLambda.value = 160;
+            sliderTensao.value = 5;
+            sliderAmortecimento.value = 0.008;
+            atualizarUI();
+        });
+
+        presetLuzVisivel.addEventListener('click', () => {
+            document.getElementById('tabEM').click();
+            sliderFreq.value = 5.0;
+            sliderAmp.value = 25;
+            sliderLambda.value = 90;
+            sliderTensao.value = 4;
+            atualizarUI();
+        });
+
+        presetRadio.addEventListener('click', () => {
+            document.getElementById('tabEM').click();
+            sliderFreq.value = 1.2;
+            sliderAmp.value = 35;
+            sliderLambda.value = 280;
+            atualizarUI();
+        });
+
+        presetTsunami.addEventListener('click', () => {
+            document.getElementById('tabMar').click();
+            sliderFreq.value = 0.8;
+            sliderAmp.value = 35;
+            sliderLambda.value = 220;
+            atualizarUI();
+        });
+
+        configurarModoUI();
+        atualizarUI();
+        desenhar();
+    </script>
+
+</body>
+</html>

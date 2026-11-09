@@ -1,0 +1,227 @@
+
+/* ==========================================================================
+Estilos Específicos para a Página do Simulador de Ondas (Bom Ondas)
+========================================================================== */
+
+/* Layout e Painel de Ações Rápidas */
+.painel-acoes-rapidas {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: space-between;
+gap: 15px;
+background: rgb(241, 245, 249);
+border: 1px solid rgb(203, 213, 225);
+padding: 15px 20px;
+margin-bottom: 25px;
+}
+
+.grupo-presets {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 10px;
+}
+
+.preset-label {
+font-weight: bold;
+color: rgb(51, 65, 85);
+font-size: 14.4px;
+}
+
+.botao-preset {
+padding: 10px 18px;
+font-size: 13.6px;
+font-weight: bold;
+color: rgb(255, 255, 255);
+border: none;
+cursor: pointer;
+border-radius: 0;
+transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-construtiva {
+background: rgb(16, 185, 129);
+border: 1px solid rgb(5, 150, 105);
+}
+
+.btn-construtiva:hover {
+background: rgb(5, 150, 105);
+}
+
+.btn-destrutiva {
+background: rgb(239, 68, 68);
+border: 1px solid rgb(220, 38, 38);
+}
+
+.btn-destrutiva:hover {
+background: rgb(220, 38, 38);
+}
+
+.botao-audio {
+padding: 10px 20px;
+font-size: 14.4px;
+font-weight: bold;
+border: 2px solid rgb(3, 105, 161);
+cursor: pointer;
+border-radius: 0;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+transition: all 0.2s ease;
+}
+
+.audio-desativado {
+background: rgb(2, 132, 199);
+color: rgb(255, 255, 255);
+}
+
+.audio-desativado:hover {
+background: rgb(3, 105, 161);
+}
+
+.audio-ativado {
+background: rgb(220, 38, 38);
+color: rgb(255, 255, 255);
+border-color: rgb(185, 28, 28);
+animation: pulsoAudio 1.5s infinite;
+}
+
+@keyframes pulsoAudio {
+0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* Área e Canvas do Visualizador */
+.conteiner-canvas {
+background: rgb(15, 23, 42);
+border: 2px solid rgb(51, 65, 85);
+margin-bottom: 25px;
+padding: 10px;
+position: relative;
+}
+
+#canvasOndas {
+display: block;
+width: 100%;
+height: 360px;
+background: rgb(15, 23, 42);
+}
+
+.legenda-canvas {
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+gap: 20px;
+padding: 12px 10px 5px 10px;
+background: rgb(30, 41, 59);
+border-top: 1px solid rgb(51, 65, 85);
+}
+
+.item-legenda {
+color: rgb(241, 245, 249);
+font-size: 13.6px;
+font-weight: bold;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.cor-indicador {
+display: inline-block;
+width: 16px;
+height: 12px;
+border-radius: 0;
+}
+
+.cor-onda1 { background: rgb(2, 132, 199); }
+.cor-onda2 { background: rgb(16, 185, 129); }
+.cor-resultante { background: rgb(239, 68, 68); }
+
+/* Cartões de Controles */
+.grade-controles {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 20px;
+margin-bottom: 25px;
+}
+
+.cartao-controle {
+background: rgb(248, 250, 252);
+border: 1px solid rgb(203, 213, 225);
+padding: 20px;
+}
+
+.cartao-onda1 { border-top: 4px solid rgb(2, 132, 199); }
+.cartao-onda2 { border-top: 4px solid rgb(16, 185, 129); }
+.cartao-geral { border-top: 4px solid rgb(51, 65, 85); }
+
+.campo-slider {
+margin-bottom: 16px;
+}
+
+.campo-slider label {
+display: block;
+font-size: 14px;
+color: rgb(51, 65, 85);
+margin-bottom: 6px;
+}
+
+.campo-slider input[type="range"] {
+width: 100%;
+cursor: pointer;
+accent-color: rgb(2, 132, 199);
+}
+
+/* Badges e Status */
+.info-status-interferencia {
+margin-top: 15px;
+padding-top: 15px;
+border-top: 1px solid rgb(226, 232, 240);
+}
+
+.rotulo-status {
+display: block;
+font-size: 13px;
+color: rgb(100, 116, 139);
+margin-bottom: 5px;
+}
+
+.badge-interferencia {
+display: inline-block;
+padding: 6px 12px;
+font-weight: bold;
+font-size: 13px;
+color: rgb(255, 255, 255);
+text-transform: uppercase;
+}
+
+.badge-construtiva { background: rgb(16, 185, 129); }
+.badge-destrutiva { background: rgb(239, 68, 68); }
+.badge-mista { background: rgb(2, 132, 199); }
+
+/* Responsividade de Tela */
+@media (max-width: 768px) {
+.painel-acoes-rapidas {
+flex-direction: column;
+align-items: stretch;
+}
+
+.grupo-presets {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.botao-preset, .botao-audio {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+#canvasOndas {
+    height: 260px;
+}
+
+
+}

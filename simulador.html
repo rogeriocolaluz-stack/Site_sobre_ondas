@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Ondas - Bom Ondas</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="./imagens/wave (1).png">
+    <style>
+        .simulador-container {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 30px;
+            border: 1px solid #334155;
+            margin-bottom: 30px;
+        }
+
+        .canvas-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #canvasOndas {
+            width: 100%;
+            height: 320px;
+            background-color: #090d16;
+            display: block;
+            border: 1px solid #334155;
+        }
+
+        .legenda-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .legenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legenda-cor {
+            width: 18px;
+            height: 4px;
+            display: inline-block;
+        }
+
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-preset {
+            background: #0284c7;
+            color: #ffffff;
+            border: 2px solid #0369a1;
+            padding: 14px 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            border-radius: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-preset:hover {
+            background: #0369a1;
+            border-color: #38bdf8;
+        }
+
+        .btn-audio {
+            background: #10b981;
+            border-color: #059669;
+        }
+
+        .btn-audio:hover {
+            background: #059669;
+            border-color: #34d399;
+        }
+
+        .btn-audio.ativo {
+            background: #ef4444;
+            border-color: #dc2626;
+        }
+
+        .btn-audio.ativo:hover {
+            background: #dc2626;
+            border-color: #f87171;
+        }
+
+        .controles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .painel-controle {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 20px;
+        }
+
+        .painel-controle h4 {
+            color: #38bdf8;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+
+        .grupo-campo {
+            margin-bottom: 18px;
+        }
+
+        .grupo-campo label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+        }
+
+        .grupo-campo input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            outline: none;
+            accent-color: #38bdf8;
+            cursor: pointer;
+        }
+
+        .valor-tag {
+            color: #38bdf8;
+            font-family: monospace;
+            font-size: 15px;
+        }
+
+        .info-card {
+            background: #1e293b;
+            border-left: 4px solid #0284c7;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card h3 {
+            color: #38bdf8;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <header class="cabecalho">
+            <h1 class="cabecalho-titulo">Bom Ondas</h1>
+            <p class="cabecalho-subtitulo">Simulador Interativo de Interferência de Ondas</p>
+        </header>
+
+        <nav id="menu">
+            <a href="index.html" class="menu-item">Início</a>
+            <a href="oqsaoondas.html" class="menu-item">O que são Ondas</a>
+            <a href="tipos_de_ondas.html" class="menu-item">Tipos de Ondas</a>
+            <a href="simulador.html" class="menu-item menu-item-ativo">Simulador Interferência</a>
+     
+            <a href="contato.html" class="menu-item">Contato</a>
+        </nav>
+
+        <main class="conteudo-principal simulador-container">
+
+            <div class="caixa-destaque" style="background-color: #1e293b; border-color: #334155;">
+                <h2 class="caixa-destaque-titulo" style="color: #38bdf8;">Simulador de Superposição &amp; Áudio em Tempo Real</h2>
+                <p class="caixa-destaque-texto" style="color: #94a3b8;">
+                    Ajuste a frequência, amplitude e a fase de duas ondas senoidais para observar a interferência construtiva e destrutiva gráfica e sonoramente.
+                </p>
+            </div>
+
+            <div class="canvas-card">
+                <canvas id="canvasOndas" width="1000" height="320"></canvas>
+                <div class="legenda-container">
+                    <div class="legenda-item">
+                        <span class="legenda-cor" style="background-color: #38bdf8;"></span>
+                        <span style="color: #38bdf8;">Onda 1 (Senoidal)</span>
+                    </div>
+                    <div class="legenda-item">
+                        <span class="legenda-cor" style="background-color: #f43f5e;"></span>
+                        <span style="color: #f43f5e;">Onda 2 (Senoidal)</span>
+                    </div>
+                    <div class="legenda-item">
+                        <span class="legenda-cor" style="background-color: #a855f7; height: 6px;"></span>
+                        <span style="color: #a855f7;">Onda Resultante (Soma)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="presets-grid">
+                <button id="btnConstrutiva" class="btn-preset">⚡ Interferência Construtiva</button>
+                <button id="btnDestrutiva" class="btn-preset" style="background: #e11d48; border-color: #be123c;">✖ Interferência Destrutiva</button>
+                <button id="btnAudio" class="btn-preset btn-audio">🔊 Ouvir Áudio da Onda</button>
+            </div>
+
+            <div class="controles-grid">
+                <div class="painel-controle">
+                    <h4>Onda 1</h4>
+                    <div class="grupo-campo">
+                        <label>Frequência: <span id="valFreq1" class="valor-tag">440 Hz</span></label>
+                        <input type="range" id="sliderFreq1" min="100" max="1000" value="440" step="1">
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Amplitude: <span id="valAmp1" class="valor-tag">40%</span></label>
+                        <input type="range" id="sliderAmp1" min="0" max="100" value="40" step="1">
+                    </div>
+                </div>
+
+                <div class="painel-controle">
+                    <h4>Onda 2</h4>
+                    <div class="grupo-campo">
+                        <label>Frequência: <span id="valFreq2" class="valor-tag">440 Hz</span></label>
+                        <input type="range" id="sliderFreq2" min="100" max="1000" value="440" step="1">
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Amplitude: <span id="valAmp2" class="valor-tag">40%</span></label>
+                        <input type="range" id="sliderAmp2" min="0" max="100" value="40" step="1">
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Deslocamento de Fase: <span id="valFase2" class="valor-tag">0°</span></label>
+                        <input type="range" id="sliderFase2" min="0" max="360" value="0" step="1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>Como Funciona o Princípio da Superposição?</h3>
+                <p class="texto-descricao" style="color: #cbd5e1; margin-bottom: 12px;">
+                    Quando duas ondas se cruzam no mesmo meio espacial, seus deslocamentos se somam ponto a ponto:
+                </p>
+                <ul style="color: #94a3b8; line-height: 1.8; margin-bottom: 0;">
+                    <li><strong>Interferência Construtiva (Fase 0° ou 360°):</strong> As cristas e vales se alinham perfeitamente, duplicando a amplitude resultante.</li>
+                    <li><strong>Interferência Destrutiva (Fase 180°):</strong> A crista de uma onda encontra o vale da outra, resultando no cancelamento total da oscilação.</li>
+                </ul>
+            </div>
+
+        </main>
+
+        <footer class="rodape">
+            <p>&copy; 2026 Site sobre Ondas - Rogério C. - BomBom&copy;</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvasOndas');
+        const ctx = canvas.getContext('2d');
+
+        const sliderFreq1 = document.getElementById('sliderFreq1');
+        const sliderAmp1 = document.getElementById('sliderAmp1');
+        const sliderFreq2 = document.getElementById('sliderFreq2');
+        const sliderAmp2 = document.getElementById('sliderAmp2');
+        const sliderFase2 = document.getElementById('sliderFase2');
+
+        const valFreq1 = document.getElementById('valFreq1');
+        const valAmp1 = document.getElementById('valAmp1');
+        const valFreq2 = document.getElementById('valFreq2');
+        const valAmp2 = document.getElementById('valAmp2');
+        const valFase2 = document.getElementById('valFase2');
+
+        const btnConstrutiva = document.getElementById('btnConstrutiva');
+        const btnDestrutiva = document.getElementById('btnDestrutiva');
+        const btnAudio = document.getElementById('btnAudio');
+
+        let tempoAnimacao = 0;
+        let audioCtx = null;
+        let osc1 = null, osc2 = null;
+        let gain1 = null, gain2 = null, masterGain = null;
+        let audioTocando = false;
+
+        function redimensionarCanvas() {
+            canvas.width = canvas.parentElement.clientWidth - 30;
+            canvas.height = 320;
+        }
+
+        window.addEventListener('resize', redimensionarCanvas);
+        redimensionarCanvas();
+
+        function atualizarValoresUI() {
+            valFreq1.textContent = parseFloat(sliderFreq1.value).toFixed(0) + ' Hz';
+            valAmp1.textContent = parseFloat(sliderAmp1.value).toFixed(0) + '%';
+            valFreq2.textContent = parseFloat(sliderFreq2.value).toFixed(0) + ' Hz';
+            valAmp2.textContent = parseFloat(sliderAmp2.value).toFixed(0) + '%';
+            valFase2.textContent = parseFloat(sliderFase2.value).toFixed(0) + '°';
+
+            atualizarParametrosAudio();
+        }
+
+        function iniciarAudio() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            osc1 = audioCtx.createOscillator();
+            osc2 = audioCtx.createOscillator();
+            gain1 = audioCtx.createGain();
+            gain2 = audioCtx.createGain();
+            masterGain = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc2.type = 'sine';
+
+            osc1.connect(gain1);
+            osc2.connect(gain2);
+            gain1.connect(masterGain);
+            gain2.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
+
+            masterGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            atualizarParametrosAudio();
+
+            osc1.start();
+            osc2.start();
+
+            audioTocando = true;
+            btnAudio.textContent = "⏹ Parar Áudio";
+            btnAudio.classList.add('ativo');
+        }
+
+        function pararAudio() {
+            if (osc1) { osc1.stop(); osc1.disconnect(); }
+            if (osc2) { osc2.stop(); osc2.disconnect(); }
+            audioTocando = false;
+            btnAudio.textContent = "🔊 Ouvir Áudio da Onda";
+            btnAudio.classList.remove('ativo');
+        }
+
+        function atualizarParametrosAudio() {
+            if (!audioTocando || !audioCtx) return;
+
+            const freq1 = parseFloat(sliderFreq1.value);
+            const freq2 = parseFloat(sliderFreq2.value);
+            const amp1 = parseFloat(sliderAmp1.value) / 100;
+            const amp2 = parseFloat(sliderAmp2.value) / 100;
+            const fase2Rad = (parseFloat(sliderFase2.value) * Math.PI) / 180;
+
+            osc1.frequency.setTargetAtTime(freq1, audioCtx.currentTime, 0.01);
+            osc2.frequency.setTargetAtTime(freq2, audioCtx.currentTime, 0.01);
+
+            gain1.gain.setTargetAtTime(amp1 * 0.3, audioCtx.currentTime, 0.01);
+            let fatorFaseAudio = Math.abs(freq1 - freq2) < 1 ? Math.cos(fase2Rad / 2) : 1;
+            gain2.gain.setTargetAtTime(amp2 * 0.3 * Math.abs(fatorFaseAudio), audioCtx.currentTime, 0.01);
+        }
+
+        function desenharOndas() {
+            const largura = canvas.width;
+            const altura = canvas.height;
+            const centroY = altura / 2;
+
+            ctx.clearRect(0, 0, largura, altura);
+
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, centroY);
+            ctx.lineTo(largura, centroY);
+            ctx.stroke();
+
+            const freq1 = parseFloat(sliderFreq1.value);
+            // Redução de escala para amplitude ajustada
+            const amp1 = parseFloat(sliderAmp1.value) * 0.5;
+            const freq2 = parseFloat(sliderFreq2.value);
+            const amp2 = parseFloat(sliderAmp2.value) * 0.5;
+            const fase2Rad = (parseFloat(sliderFase2.value) * Math.PI) / 180;
+
+            const escalaFreq = 0.00008;
+
+            // Onda 1
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 0; x < largura; x++) {
+                const y = centroY - Math.sin(x * freq1 * escalaFreq - tempoAnimacao) * amp1;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Onda 2
+            ctx.strokeStyle = 'rgba(244, 63, 94, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 0; x < largura; x++) {
+                const y = centroY - Math.sin(x * freq2 * escalaFreq - tempoAnimacao + fase2Rad) * amp2;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Onda Resultante
+            ctx.strokeStyle = '#a855f7';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            for (let x = 0; x < largura; x++) {
+                const y1 = Math.sin(x * freq1 * escalaFreq - tempoAnimacao) * amp1;
+                const y2 = Math.sin(x * freq2 * escalaFreq - tempoAnimacao + fase2Rad) * amp2;
+                const yResultante = centroY - (y1 + y2);
+
+                if (x === 0) ctx.moveTo(x, yResultante);
+                else ctx.lineTo(x, yResultante);
+            }
+            ctx.stroke();
+
+            tempoAnimacao += 0.05;
+            requestAnimationFrame(desenharOndas);
+        }
+
+        btnConstrutiva.addEventListener('click', () => {
+            sliderFreq1.value = 440;
+            sliderFreq2.value = 440;
+            sliderAmp1.value = 40;
+            sliderAmp2.value = 40;
+            sliderFase2.value = 0;
+            atualizarValoresUI();
+        });
+
+        btnDestrutiva.addEventListener('click', () => {
+            sliderFreq1.value = 440;
+            sliderFreq2.value = 440;
+            sliderAmp1.value = 40;
+            sliderAmp2.value = 40;
+            sliderFase2.value = 180;
+            atualizarValoresUI();
+        });
+
+        [sliderFreq1, sliderAmp1, sliderFreq2, sliderAmp2, sliderFase2].forEach(input => {
+            input.addEventListener('input', atualizarValoresUI);
+        });
+
+        btnAudio.addEventListener('click', () => {
+            if (audioTocando) pararAudio();
+            else iniciarAudio();
+        });
+
+        atualizarValoresUI();
+        desenharOndas();
+    </script>
+
+</body>
+</html>
